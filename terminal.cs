@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace _3x3
@@ -9,18 +8,40 @@ namespace _3x3
     {
         static void Main(string[] args)
         {
+            Random rnd = new Random();
             bool zmaga = false;
             char[] polja = new char[9];
-            
+
+            int tezavnost = -1;
+
+            Console.WriteLine("Tic Tac Toe game");
+            Console.WriteLine("izberite tezavnost (0-najlazja, 1-lahka, 2-srednja, 3-tezka): ");
+            while(true)
+            {
+                string a = Console.ReadLine();
+                int dump;
+                if (Int32.TryParse(a, out dump))
+                {
+                    tezavnost = Int32.Parse(a);
+                    if (tezavnost >= 0 && tezavnost <= 3)
+                    {
+                        break;
+                    }
+                }
+            }
+            Console.WriteLine();
+            Console.WriteLine("Naj se igra zacne!");
+            Console.WriteLine();
+            Console.WriteLine();
+
             //izbira kdo zacne
-            Random rnd = new Random();
             int start = rnd.Next(0, 2);
             if (start == 0)
             {
                 //zacne racunalnik
                 while (!zmaga) //dokler nekdo ne zmaga
                 {
-                    int poteza = CPUPlay(polja, 3);
+                    int poteza = CPUPlay(polja, tezavnost);
                     if (poteza == 999)
                     {
                         Console.WriteLine("izenaceno!");
@@ -62,7 +83,7 @@ namespace _3x3
                 {
                     //izbira zacetnega polja
                     int u = UserPlay(polja);
-                    Debug.Print(u.ToString());
+                    
                     if (u == 999)
                     {
                         Console.WriteLine("izenaceno!");
@@ -73,8 +94,8 @@ namespace _3x3
                     izpis(polja); 
                     if (zmaga == false)
                     {
-                        int poteza = CPUPlay(polja, 2);
-                        Debug.Print(poteza.ToString());
+                        int poteza = CPUPlay(polja, tezavnost);
+                        
                         if (poteza == 999)
                         {
                             Console.WriteLine("izenaceno!");
@@ -377,7 +398,7 @@ namespace _3x3
             }
 
             //uporabnikov vnos
-            Console.WriteLine(string.Join(",",free));
+            Console.WriteLine("Prosta mesta: " + string.Join(",",free));
             while(true)
             {
                 string a = Console.ReadLine();
@@ -430,26 +451,30 @@ namespace _3x3
         private static  void izpis(char[] polja)
         {
             //izpisemo trenutno stanje na polju
-            char[] backup = new char[9];
-            Array.Copy(polja, backup, 9);
-
-            for (int i = 0; i < backup.Length; i++)
+            for (int i = 1; i <= polja.Length; i++)
             {
-                if (backup[i] == default(char))
+                bool sprememba = false;
+                if (polja[i-1] == default(char))
                 {
-                    backup[i] = 'X';
+                    polja[i-1] = 'X';
+                    sprememba = true;
                 }
-            }
-            for (int i = 1; i <= backup.Length; i++)
-            {
+
                 if (i % 3 == 0)
                 {
-                    Console.Write(backup[i - 1]);
+                    Console.Write(polja[i - 1]);
                     Console.WriteLine();
+                    Console.WriteLine("- - -");
                 }
                 else
                 {
-                    Console.Write(backup[i - 1]);
+                    Console.Write(polja[i - 1] + "|");
+                }
+
+                if (sprememba)
+                {
+                    polja[i - 1] = default(char);
+                    sprememba = false;
                 }
             }
             Console.WriteLine();
